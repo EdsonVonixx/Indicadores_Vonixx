@@ -10,6 +10,8 @@ import {
 } from "recharts";
 import { supabase } from "./supabaseClient";
 
+const STORAGE_BUCKET = "anexos-indicadores";
+
 const usuarios = [
   { nome: "Almoxarifado U&C", senha: "UC1", setor: "Almoxarifado (Uso & Consumo)" },
   { nome: "Recebimento e Armazenagem", senha: "RA2", setor: "Operações Recebimento Geral" },
@@ -370,44 +372,71 @@ export default function AppIndicadoresArea() {
     }
 
     const anexosSalvos = [];
+    const errosAnexos = [];
 
     for (const anexo of novo.anexos || []) {
-      if (!anexo.file) continue;
+      if (!anexo?.file) continue;
 
-      const nomeSeguro = anexo.nome.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const nomeSeguro = String(anexo.nome || anexo.file.name || "arquivo")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9._-]/g, "_");
+
       const caminhoArquivo = `${registroCriado.id}/${Date.now()}-${nomeSeguro}`;
 
       const { error: erroUpload } = await supabase.storage
-        .from("anexos-indicadores")
-        .upload(caminhoArquivo, anexo.file, { upsert: true });
+        .from(STORAGE_BUCKET)
+        .upload(caminhoArquivo, anexo.file, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: anexo.file.type || anexo.tipo || "application/octet-stream",
+        });
 
       if (erroUpload) {
-        console.error(erroUpload);
+        console.error("Erro no upload do anexo:", erroUpload);
+        errosAnexos.push(`${anexo.nome}: ${erroUpload.message || "falha no upload"}`);
         continue;
       }
 
       const { data: urlPublica } = supabase.storage
-        .from("anexos-indicadores")
+        .from(STORAGE_BUCKET)
         .getPublicUrl(caminhoArquivo);
+
+      if (!urlPublica?.publicUrl) {
+        errosAnexos.push(`${anexo.nome}: URL pública não gerada`);
+        continue;
+      }
 
       const { data: anexoCriado, error: erroAnexo } = await supabase
         .from("anexos_indicadores")
         .insert({
           registro_id: registroCriado.id,
           nome_arquivo: anexo.nome,
-          tipo_arquivo: anexo.tipo,
+          tipo_arquivo: anexo.tipo || anexo.file.type || "documento",
           url_arquivo: urlPublica.publicUrl,
         })
         .select()
         .single();
 
-      if (!erroAnexo && anexoCriado) {
+      if (erroAnexo) {
+        console.error("Erro ao gravar anexo na tabela:", erroAnexo);
+        errosAnexos.push(`${anexo.nome}: ${erroAnexo.message || "falha ao gravar na tabela"}`);
+        continue;
+      }
+
+      if (anexoCriado) {
         anexosSalvos.push({
           nome: anexoCriado.nome_arquivo,
           tipo: anexoCriado.tipo_arquivo,
           url: anexoCriado.url_arquivo,
         });
       }
+    }
+
+    if (errosAnexos.length > 0) {
+      setErroBanco(
+        `Registro salvo, mas houve erro em anexo(s): ${errosAnexos.join(" | ")}`
+      );
     }
 
     setRegistros([
