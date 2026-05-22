@@ -66,23 +66,23 @@ function statusIndicador(resultado, indicador) {
   if (dentroDaMeta) {
     return {
       texto: "Dentro da Meta",
-      classe: "bg-green-100 text-green-800 border-green-300",
-      painel: "bg-green-600 text-white",
-      borda: "border-green-400",
+      classe: "border-emerald-400/40 bg-emerald-500/10 text-emerald-300",
+      painel: "bg-emerald-500/15 text-emerald-100 border border-emerald-400/30 shadow-[0_0_22px_rgba(52,211,153,0.22)]",
+      borda: "border-emerald-400/35",
     };
   }
 
   return {
     texto: "Fora da Meta",
-    classe: "bg-red-100 text-red-800 border-red-300",
-    painel: "bg-red-600 text-white",
-    borda: "border-red-400",
+    classe: "border-red-400/40 bg-red-500/10 text-red-300",
+    painel: "bg-red-500/15 text-red-100 border border-red-400/30 shadow-[0_0_22px_rgba(248,113,113,0.22)]",
+    borda: "border-red-400/35",
   };
 }
 
 function Card({ children, className = "" }) {
   return (
-    <div className={`rounded-3xl bg-white p-5 shadow-sm border ${className || "border-slate-100"}`}>
+    <div className={`rounded-[1.65rem] border bg-slate-950/55 p-5 shadow-[0_0_32px_rgba(0,80,255,0.13)] backdrop-blur-xl ${className || "border-slate-700/45"}`}>
       {children}
     </div>
   );
@@ -90,7 +90,7 @@ function Card({ children, className = "" }) {
 
 function Badge({ children, className = "" }) {
   return (
-    <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-bold ${className}`}>
+    <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${className}`}>
       {children}
     </span>
   );
@@ -538,29 +538,33 @@ export default function AppIndicadoresArea() {
     indicadoresBase.find((i) => i.id === Number(novo.indicadorId)) || indicadoresParaEntrada[0];
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 text-slate-900">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <header className="rounded-3xl bg-slate-900 p-6 text-white shadow-xl">
+    <div className="relative min-h-screen overflow-hidden bg-[#030711] p-5 text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_12%,rgba(0,102,255,0.20),transparent_28%),radial-gradient(circle_at_88%_86%,rgba(0,132,255,0.18),transparent_30%),linear-gradient(135deg,#02040a_0%,#07111f_45%,#02040a_100%)]" />
+      <div className="absolute -left-32 top-0 h-[620px] w-[210px] rotate-[31deg] border-r border-blue-500/25 bg-gradient-to-r from-transparent via-blue-950/40 to-blue-500/10" />
+      <div className="absolute right-[-120px] bottom-[-160px] h-[640px] w-[210px] rotate-[31deg] border-l border-blue-500/30 bg-gradient-to-l from-transparent via-blue-950/35 to-blue-500/10" />
+      <div className="absolute inset-0 opacity-[0.10] [background-image:radial-gradient(circle,#60a5fa_1px,transparent_1px)] [background-size:24px_24px]" />
+      <div className="relative z-10 mx-auto max-w-7xl space-y-6">
+        <header className="rounded-[2rem] border border-slate-700/40 bg-slate-950/55 p-5 text-white shadow-[0_0_45px_rgba(0,80,255,0.18)] backdrop-blur-xl">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-slate-300">
+              <p className="text-sm uppercase tracking-[0.25em] text-blue-300">
                 Gestão Integrada de Operações & Materiais
               </p>
-              <h1 className="mt-2 text-3xl font-bold">
+              <h1 className="mt-2 text-3xl font-black">
                 Aplicativo de Indicadores Operacionais
               </h1>
-              <p className="mt-2 text-slate-300">
+              <p className="mt-2 text-slate-400">
                 Controle diário por setor, data, turnos, cálculo automático e semáforo executivo.
               </p>
             </div>
 
-            <div className="rounded-2xl bg-white/10 p-4 text-sm">
+            <div className="rounded-2xl border border-slate-700/40 bg-[#07111f]/80 p-4 text-sm shadow-lg">
               <p className="text-slate-300">Usuário logado</p>
               <p className="font-bold">{usuarioLogado.nome}</p>
               <p className="text-slate-300">Setor: {usuarioLogado.setor}</p>
               <button
                 onClick={sair}
-                className="mt-3 rounded-xl bg-white px-4 py-2 font-bold text-slate-900"
+                className="mt-3 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-2 font-black text-red-300"
               >
                 Sair
               </button>
@@ -568,7 +572,7 @@ export default function AppIndicadoresArea() {
           </div>
         </header>
 
-        <nav className="grid grid-cols-3 gap-2 rounded-2xl bg-white p-2 shadow-sm">
+        <nav className="grid grid-cols-3 gap-2 rounded-[1.5rem] border border-slate-700/40 bg-slate-950/50 p-2 shadow-[0_0_24px_rgba(0,80,255,0.10)] backdrop-blur">
           {[
             ["dashboard", "Dashboard Executivo"],
             ["entrada", "Entrada Manual"],
@@ -577,8 +581,8 @@ export default function AppIndicadoresArea() {
             <button
               key={valor}
               onClick={() => setAba(valor)}
-              className={`rounded-xl px-4 py-3 font-semibold ${
-                aba === valor ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"
+              className={`rounded-2xl px-4 py-4 text-sm font-black uppercase tracking-[0.08em] transition ${
+                aba === valor ? "bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 text-white shadow-[0_0_24px_rgba(37,99,235,0.45)]" : "bg-[#07111f]/70 text-slate-300 hover:bg-blue-950/60"
               }`}
             >
               {texto}
@@ -594,7 +598,7 @@ export default function AppIndicadoresArea() {
                 value={setorFiltro}
                 onChange={(e) => setSetorFiltro(e.target.value)}
                 disabled={usuarioLogado.setor !== "Todos"}
-                className="rounded-xl border bg-white px-4 py-2 disabled:bg-slate-100 disabled:text-slate-500"
+                className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-sm font-semibold text-white outline-none disabled:opacity-60"
               >
                 {setoresDisponiveis.map((s) => (
                   <option key={s}>{s}</option>
@@ -605,7 +609,7 @@ export default function AppIndicadoresArea() {
               <select
                 value={tipoVisao}
                 onChange={(e) => setTipoVisao(e.target.value)}
-                className="rounded-xl border bg-white px-4 py-2"
+                className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-sm font-semibold text-white outline-none"
               >
                 <option value="diario">Diária</option>
                 <option value="semanal">Semanal</option>
@@ -624,7 +628,7 @@ export default function AppIndicadoresArea() {
                       setAnoFiltro(data.getFullYear());
                       setMesFiltro(data.getMonth() + 1);
                     }}
-                    className="rounded-xl border bg-white px-4 py-2"
+                    className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-sm font-semibold text-white outline-none"
                   />
                 </>
               )}
@@ -635,7 +639,7 @@ export default function AppIndicadoresArea() {
                   <select
                     value={anoFiltro}
                     onChange={(e) => setAnoFiltro(Number(e.target.value))}
-                    className="rounded-xl border bg-white px-4 py-2"
+                    className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-sm font-semibold text-white outline-none"
                   >
                     <option value={2026}>2026</option>
                     <option value={2027}>2027</option>
@@ -646,7 +650,7 @@ export default function AppIndicadoresArea() {
                   <select
                     value={mesFiltro}
                     onChange={(e) => setMesFiltro(Number(e.target.value))}
-                    className="rounded-xl border bg-white px-4 py-2"
+                    className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-sm font-semibold text-white outline-none"
                   >
                     <option value={1}>Janeiro</option>
                     <option value={2}>Fevereiro</option>
@@ -670,7 +674,7 @@ export default function AppIndicadoresArea() {
                   <select
                     value={semanaFiltro}
                     onChange={(e) => setSemanaFiltro(e.target.value)}
-                    className="rounded-xl border bg-white px-4 py-2"
+                    className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-sm font-semibold text-white outline-none"
                   >
                     <option value="1">1ª semana</option>
                     <option value="2">2ª semana</option>
@@ -681,46 +685,46 @@ export default function AppIndicadoresArea() {
                 </>
               )}
 
-              <Badge className="bg-slate-100 text-slate-700 border-slate-300">
+              <Badge className="border-blue-400/40 bg-blue-500/10 text-blue-200">
                 {periodoSelecionado.label}
               </Badge>
             </div>
 
             {erroBanco && (
-              <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">
+              <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-300">
                 {erroBanco}
               </div>
             )}
 
             {carregandoBanco && (
-              <div className="rounded-2xl bg-blue-50 p-4 text-sm font-semibold text-blue-700">
+              <div className="rounded-2xl bg-blue-50 p-4 text-sm font-semibold text-cyan-300">
                 Carregando dados do banco de dados...
               </div>
             )}
 
             <div className="grid gap-4 md:grid-cols-5">
               <Card>
-                <p className="text-sm text-slate-500">Setor</p>
+                <p className="text-sm text-slate-400">Setor</p>
                 <h2 className="text-xl font-bold">{setorFiltro}</h2>
               </Card>
 
               <Card>
-                <p className="text-sm text-slate-500">Indicadores</p>
+                <p className="text-sm text-slate-400">Indicadores</p>
                 <h2 className="text-3xl font-bold">{resumoIndicadores.length}</h2>
               </Card>
 
               <Card>
-                <p className="text-sm text-slate-500">Dentro da Meta</p>
-                <h2 className="text-3xl font-bold text-green-700">{verdes}</h2>
+                <p className="text-sm text-slate-400">Dentro da Meta</p>
+                <h2 className="text-3xl font-bold text-emerald-300">{verdes}</h2>
               </Card>
 
               <Card>
-                <p className="text-sm text-slate-500">Fora da Meta</p>
-                <h2 className="text-3xl font-bold text-red-700">{vermelhos}</h2>
+                <p className="text-sm text-slate-400">Fora da Meta</p>
+                <h2 className="text-3xl font-bold text-red-300">{vermelhos}</h2>
               </Card>
 
               <Card>
-                <p className="text-sm text-slate-500">Registros do Período</p>
+                <p className="text-sm text-slate-400">Registros do Período</p>
                 <h2 className="text-3xl font-bold">
                   {resumoIndicadores.reduce((acc, i) => acc + i.registros.length, 0)}
                 </h2>
@@ -732,9 +736,9 @@ export default function AppIndicadoresArea() {
                 <Card key={item.id} className={item.status.borda}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm text-slate-500">{item.setor}</p>
+                      <p className="text-sm text-slate-400">{item.setor}</p>
                       <h3 className="text-xl font-bold">{item.indicador}</h3>
-                      <p className="mt-1 text-sm text-slate-500">
+                      <p className="mt-1 text-sm text-slate-400">
                         Meta: {item.regraMeta === "menor" ? "até" : "mínimo"} {item.meta}
                         {item.unidade} | {item.descricao}
                       </p>
@@ -744,13 +748,13 @@ export default function AppIndicadoresArea() {
                   </div>
 
                   <div className="mt-5 grid grid-cols-3 gap-3">
-                    <div className="rounded-2xl bg-slate-100 p-4">
-                      <p className="text-xs text-slate-500">R1 Total</p>
+                    <div className="rounded-2xl border border-slate-700/40 bg-[#07111f]/90 p-4">
+                      <p className="text-xs text-slate-400">R1 Total</p>
                       <h4 className="text-xl font-bold">{item.somaR1.toLocaleString("pt-BR")}</h4>
                     </div>
 
-                    <div className="rounded-2xl bg-slate-100 p-4">
-                      <p className="text-xs text-slate-500">R2 Total</p>
+                    <div className="rounded-2xl border border-slate-700/40 bg-[#07111f]/90 p-4">
+                      <p className="text-xs text-slate-400">R2 Total</p>
                       <h4 className="text-xl font-bold">
                         {item.tipoCalculo === "percentualDireto"
                           ? "N/A"
@@ -770,7 +774,7 @@ export default function AppIndicadoresArea() {
             <div className="space-y-4">
               <div>
                 <h3 className="text-xl font-bold">Curva de Resultado - Últimos 5 Dias</h3>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-400">
                   Visualização individual por setor e indicador.
                 </p>
               </div>
@@ -783,9 +787,9 @@ export default function AppIndicadoresArea() {
                     <Card key={indicador.id} className={indicador.status.borda}>
                       <div className="mb-4 flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-sm text-slate-500">{indicador.setor}</p>
+                          <p className="text-sm text-slate-400">{indicador.setor}</p>
                           <h4 className="text-lg font-bold">{indicador.indicador}</h4>
-                          <p className="text-sm text-slate-500">
+                          <p className="text-sm text-slate-400">
                             Meta: {indicador.regraMeta === "menor" ? "até" : "mínimo"}{" "}
                             {indicador.meta}
                             {indicador.unidade}
@@ -843,7 +847,7 @@ export default function AppIndicadoresArea() {
         {aba === "entrada" && (
           <section className="space-y-6">
             {erroBanco && (
-              <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">
+              <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-300">
                 {erroBanco}
               </div>
             )}
@@ -856,7 +860,7 @@ export default function AppIndicadoresArea() {
                   type="date"
                   value={novo.data}
                   onChange={(e) => setNovo({ ...novo, data: e.target.value })}
-                  className="rounded-xl border px-3 py-2"
+                  className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-white outline-none placeholder:text-slate-500"
                 />
 
                 <select
@@ -870,7 +874,7 @@ export default function AppIndicadoresArea() {
                       turno: "",
                     })
                   }
-                  className="rounded-xl border px-3 py-2 md:col-span-2"
+                  className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-white outline-none md:col-span-2"
                 >
                   {indicadoresParaEntrada.map((ind) => (
                     <option key={ind.id} value={ind.id}>
@@ -882,7 +886,7 @@ export default function AppIndicadoresArea() {
                 <select
                   value={novo.turno}
                   onChange={(e) => setNovo({ ...novo, turno: e.target.value })}
-                  className="rounded-xl border px-3 py-2"
+                  className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-white outline-none placeholder:text-slate-500"
                 >
                   <option value="">Selecione o turno</option>
                   {obterTurnosPorSetor().map((turno) => (
@@ -895,7 +899,7 @@ export default function AppIndicadoresArea() {
                 <button
                   onClick={adicionarRegistro}
                   disabled={salvandoRegistro}
-                  className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-xl border border-cyan-300/60 bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 px-5 py-3 font-black uppercase tracking-[0.08em] text-white shadow-[0_0_24px_rgba(37,99,235,0.38)] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {salvandoRegistro ? "Salvando..." : "Adicionar"}
                 </button>
@@ -907,7 +911,7 @@ export default function AppIndicadoresArea() {
                   type="number"
                   value={novo.r1}
                   onChange={(e) => setNovo({ ...novo, r1: e.target.value })}
-                  className="rounded-xl border px-3 py-2"
+                  className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-white outline-none placeholder:text-slate-500"
                 />
 
                 {indicadorEntrada?.tipoCalculo !== "percentualDireto" && (
@@ -916,13 +920,13 @@ export default function AppIndicadoresArea() {
                     type="number"
                     value={novo.r2}
                     onChange={(e) => setNovo({ ...novo, r2: e.target.value })}
-                    className="rounded-xl border px-3 py-2"
+                    className="rounded-xl border border-slate-600/50 bg-[#020711]/75 px-4 py-3 text-white outline-none placeholder:text-slate-500"
                   />
                 )}
               </div>
 
-              <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
-                <label className="text-sm font-bold text-slate-700">
+              <div className="mt-4 rounded-2xl border border-dashed border-blue-400/30 bg-blue-500/5 p-4">
+                <label className="text-sm font-bold text-slate-200">
                   Anexar fotos ou documentos
                 </label>
 
@@ -941,7 +945,7 @@ export default function AppIndicadoresArea() {
 
                     setNovo({ ...novo, anexos: arquivos });
                   }}
-                  className="mt-2 block w-full rounded-xl border bg-white px-3 py-2 text-sm"
+                  className="mt-2 block w-full rounded-xl border border-slate-600/50 bg-[#020711]/75 px-3 py-3 text-sm text-white"
                 />
 
                 {novo.anexos.length > 0 && (
@@ -949,14 +953,14 @@ export default function AppIndicadoresArea() {
                     {novo.anexos.map((arquivo, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between rounded-xl bg-white px-3 py-2 text-sm shadow-sm"
+                        className="flex items-center justify-between rounded-xl border border-slate-700/40 bg-[#07111f]/80 px-3 py-2 text-sm shadow-sm"
                       >
-                        <span className="font-medium text-slate-700">{arquivo.nome}</span>
+                        <span className="font-medium text-slate-200">{arquivo.nome}</span>
                         <a
                           href={arquivo.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="font-bold text-blue-700"
+                          className="font-bold text-cyan-300"
                         >
                           Visualizar
                         </a>
@@ -966,7 +970,7 @@ export default function AppIndicadoresArea() {
                 )}
               </div>
 
-              <p className="mt-3 text-sm text-slate-500">
+              <p className="mt-3 text-sm text-slate-400">
                 Para TMR, informe o tempo total em minutos no R1 e o total de carros/cargas no R2.
                 O resultado será exibido em HH:MM.
               </p>
@@ -977,7 +981,7 @@ export default function AppIndicadoresArea() {
 
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-slate-100 text-left">
+                  <thead className="bg-blue-950/40 text-left text-xs uppercase tracking-[0.12em] text-blue-200">
                     <tr>
                       <th className="p-3">Data</th>
                       <th>Indicador</th>
@@ -1004,8 +1008,8 @@ export default function AppIndicadoresArea() {
                           : { painel: "bg-slate-500 text-white" };
 
                         return (
-                          <tr key={r.id} className="border-t">
-                            <td className="p-3 font-medium">{r.data}</td>
+                          <tr key={r.id} className="border-t border-slate-800/80 text-slate-300">
+                            <td className="p-3 font-bold text-white">{r.data}</td>
                             <td>{indicador?.indicador}</td>
                             <td>{r.turno}</td>
                             <td>{Number(r.r1).toLocaleString("pt-BR")}</td>
@@ -1028,7 +1032,7 @@ export default function AppIndicadoresArea() {
                                       href={arquivo.url}
                                       target="_blank"
                                       rel="noreferrer"
-                                      className="block font-bold text-blue-700"
+                                      className="block font-bold text-cyan-300"
                                     >
                                       {arquivo.nome}
                                     </a>
@@ -1041,7 +1045,7 @@ export default function AppIndicadoresArea() {
                             <td>
                               <button
                                 onClick={() => removerRegistro(r.id)}
-                                className="rounded-lg bg-red-50 px-3 py-1 text-xs font-bold text-red-700"
+                                className="rounded-lg bg-red-50 px-3 py-1 text-xs font-bold text-red-300"
                               >
                                 Excluir
                               </button>
@@ -1057,22 +1061,22 @@ export default function AppIndicadoresArea() {
         )}
 
         {aba === "tv" && (
-          <section className="rounded-3xl bg-slate-900 p-8 text-white shadow-xl">
+          <section className="rounded-[2rem] border border-slate-700/40 bg-slate-950/55 p-8 text-white shadow-[0_0_45px_rgba(0,80,255,0.18)] backdrop-blur-xl">
             <p className="text-slate-400">Modo TV Operacional | {periodoSelecionado.label}</p>
             <h2 className="text-4xl font-bold">Performance - {setorFiltro}</h2>
 
             <div className="mt-8 grid gap-6 md:grid-cols-3">
-              <div className="rounded-3xl bg-white/10 p-6">
+              <div className="rounded-3xl border border-blue-500/20 bg-blue-500/10 p-6">
                 <p className="text-slate-300">Indicadores</p>
                 <h3 className="mt-2 text-5xl font-bold">{resumoIndicadores.length}</h3>
               </div>
 
-              <div className="rounded-3xl bg-white/10 p-6">
+              <div className="rounded-3xl border border-blue-500/20 bg-blue-500/10 p-6">
                 <p className="text-slate-300">Dentro da Meta</p>
                 <h3 className="mt-2 text-5xl font-bold">{verdes}</h3>
               </div>
 
-              <div className="rounded-3xl bg-white/10 p-6">
+              <div className="rounded-3xl border border-blue-500/20 bg-blue-500/10 p-6">
                 <p className="text-slate-300">Fora da Meta</p>
                 <h3 className="mt-2 text-5xl font-bold">{vermelhos}</h3>
               </div>
