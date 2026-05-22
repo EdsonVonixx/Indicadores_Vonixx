@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   LineChart,
   Line,
@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { supabase } from "./supabaseClient";
 
 const usuarios = [
   { nome: "Almoxarifado U&C", senha: "UC1", setor: "Almoxarifado (Uso & Consumo)" },
@@ -123,6 +124,9 @@ export default function AppIndicadoresArea() {
 
   const [setorFiltro, setSetorFiltro] = useState("Todos");
   const [registros, setRegistros] = useState(registrosIniciais);
+  const [carregandoBanco, setCarregandoBanco] = useState(false);
+  const [erroBanco, setErroBanco] = useState("");
+  const [salvandoRegistro, setSalvandoRegistro] = useState(false);
 
   const [novo, setNovo] = useState({
     data: formatarDataISO(new Date()),
@@ -132,6 +136,45 @@ export default function AppIndicadoresArea() {
     r2: "",
     anexos: [],
   });
+
+  useEffect(() => {
+    carregarRegistrosBanco();
+  }, []);
+
+  async function carregarRegistrosBanco() {
+    setCarregandoBanco(true);
+    setErroBanco("");
+
+    const { data, error } = await supabase
+      .from("registros_indicadores")
+      .select("*, anexos_indicadores(*)")
+      .order("data", { ascending: false })
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      setErroBanco("Não foi possível carregar os registros do banco de dados.");
+      setCarregandoBanco(false);
+      return;
+    }
+
+    const registrosConvertidos = (data || []).map((item) => ({
+      id: item.id,
+      data: item.data,
+      indicadorId: Number(item.indicador_id),
+      turno: item.turno,
+      r1: Number(item.r1 || 0),
+      r2: Number(item.r2 || 0),
+      anexos: (item.anexos_indicadores || []).map((anexo) => ({
+        nome: anexo.nome_arquivo,
+        tipo: anexo.tipo_arquivo,
+        url: anexo.url_arquivo,
+      })),
+    }));
+
+    setRegistros(registrosConvertidos);
+    setCarregandoBanco(false);
+  }
 
   const setoresDisponiveis = useMemo(
     () => ["Todos", ...Array.from(new Set(indicadoresBase.map((i) => i.setor)))],
@@ -274,30 +317,131 @@ export default function AppIndicadoresArea() {
     return ["Comercial"];
   }
 
-  function adicionarRegistro() {
+  async function adicionarRegistro() {
     const indicadorSelecionado = indicadoresBase.find((i) => i.id === Number(novo.indicadorId));
 
-    if (!indicadorSelecionado || !novo.data || !novo.turno || !novo.r1) return;
-    if (indicadorSelecionado.tipoCalculo !== "percentualDireto" && !novo.r2) return;
+    if (!indicadorSelecionado || !novo.data || !novo.turno || !novo.r1) {
+      setErroBanco("Preencha data, indicador, turno e R1 antes de adicionar.");
+      return;
+    }
+
+    if (indicadorSelecionado.tipoCalculo !== "percentualDireto" && !novo.r2) {
+      setErroBanco("Preencha o R2 antes de adicionar.");
+      return;
+    }
+
+    setSalvandoRegistro(true);
+    setErroBanco("");
+
+    const registroParaCalculo = {
+      id: Date.now(),
+      data: novo.data,
+      indicadorId: Number(novo.indicadorId),
+      turno: novo.turno,
+      r1: Number(novo.r1),
+      r2: indicadorSelecionado.tipoCalculo === "percentualDireto" ? 0 : Number(novo.r2),
+      anexos: [],
+    };
+
+    const resultadoCalculado = calcularResultado([registroParaCalculo], indicadorSelecionado);
+
+    const { data: registroCriado, error } = await supabase
+      .from("registros_indicadores")
+      .insert({
+        data: novo.data,
+        indicador_id: Number(novo.indicadorId),
+        indicador_nome: indicadorSelecionado.indicador,
+        setor: indicadorSelecionado.setor,
+        turno: novo.turno,
+        r1: Number(novo.r1),
+        r2: indicadorSelecionado.tipoCalculo === "percentualDireto" ? 0 : Number(novo.r2),
+        resultado: resultadoCalculado,
+        unidade: indicadorSelecionado.unidade,
+        usuario_nome: usuarioLogado?.nome || "",
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error(error);
+      setErroBanco("Erro ao salvar registro no banco de dados.");
+      setSalvandoRegistro(false);
+      return;
+    }
+
+    const anexosSalvos = [];
+
+    for (const anexo of novo.anexos || []) {
+      if (!anexo.file) continue;
+
+      const nomeSeguro = anexo.nome.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const caminhoArquivo = `${registroCriado.id}/${Date.now()}-${nomeSeguro}`;
+
+      const { error: erroUpload } = await supabase.storage
+        .from("anexos-indicadores")
+        .upload(caminhoArquivo, anexo.file, { upsert: true });
+
+      if (erroUpload) {
+        console.error(erroUpload);
+        continue;
+      }
+
+      const { data: urlPublica } = supabase.storage
+        .from("anexos-indicadores")
+        .getPublicUrl(caminhoArquivo);
+
+      const { data: anexoCriado, error: erroAnexo } = await supabase
+        .from("anexos_indicadores")
+        .insert({
+          registro_id: registroCriado.id,
+          nome_arquivo: anexo.nome,
+          tipo_arquivo: anexo.tipo,
+          url_arquivo: urlPublica.publicUrl,
+        })
+        .select()
+        .single();
+
+      if (!erroAnexo && anexoCriado) {
+        anexosSalvos.push({
+          nome: anexoCriado.nome_arquivo,
+          tipo: anexoCriado.tipo_arquivo,
+          url: anexoCriado.url_arquivo,
+        });
+      }
+    }
 
     setRegistros([
       ...registros,
       {
-        id: Date.now(),
-        data: novo.data,
-        indicadorId: Number(novo.indicadorId),
-        turno: novo.turno,
-        r1: Number(novo.r1),
-        r2: indicadorSelecionado.tipoCalculo === "percentualDireto" ? 0 : Number(novo.r2),
-        anexos: novo.anexos,
+        id: registroCriado.id,
+        data: registroCriado.data,
+        indicadorId: Number(registroCriado.indicador_id),
+        turno: registroCriado.turno,
+        r1: Number(registroCriado.r1),
+        r2: Number(registroCriado.r2 || 0),
+        anexos: anexosSalvos,
       },
     ]);
 
     setDiaCalendarioFiltro(novo.data);
     setNovo({ ...novo, r1: "", r2: "", anexos: [] });
+    setSalvandoRegistro(false);
   }
 
-  function removerRegistro(id) {
+  async function removerRegistro(id) {
+    setErroBanco("");
+
+    const { error } = await supabase
+      .from("registros_indicadores")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error(error);
+      setErroBanco("Erro ao excluir registro do banco de dados.");
+      return;
+    }
+
     setRegistros(registros.filter((r) => r.id !== id));
   }
 
@@ -519,6 +663,18 @@ export default function AppIndicadoresArea() {
               </Badge>
             </div>
 
+            {erroBanco && (
+              <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">
+                {erroBanco}
+              </div>
+            )}
+
+            {carregandoBanco && (
+              <div className="rounded-2xl bg-blue-50 p-4 text-sm font-semibold text-blue-700">
+                Carregando dados do banco de dados...
+              </div>
+            )}
+
             <div className="grid gap-4 md:grid-cols-5">
               <Card>
                 <p className="text-sm text-slate-500">Setor</p>
@@ -663,6 +819,12 @@ export default function AppIndicadoresArea() {
 
         {aba === "entrada" && (
           <section className="space-y-6">
+            {erroBanco && (
+              <div className="rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">
+                {erroBanco}
+              </div>
+            )}
+
             <Card>
               <h3 className="mb-4 text-xl font-bold">Preenchimento diário por turno</h3>
 
@@ -709,9 +871,10 @@ export default function AppIndicadoresArea() {
 
                 <button
                   onClick={adicionarRegistro}
-                  className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white"
+                  disabled={salvandoRegistro}
+                  className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Adicionar
+                  {salvandoRegistro ? "Salvando..." : "Adicionar"}
                 </button>
               </div>
 
@@ -750,6 +913,7 @@ export default function AppIndicadoresArea() {
                       tipo: file.type || "documento",
                       tamanho: file.size,
                       url: URL.createObjectURL(file),
+                      file,
                     }));
 
                     setNovo({ ...novo, anexos: arquivos });
