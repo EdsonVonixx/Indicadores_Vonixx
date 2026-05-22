@@ -446,32 +446,51 @@ export default function AppIndicadoresArea() {
   }
 
   if (!usuarioLogado) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-900 p-6 text-slate-900">
-        <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
-          <p className="text-sm uppercase tracking-[0.25em] text-slate-500">
-            Gestão Integrada Vonixx
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-[#030711] text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(0,102,255,0.22),transparent_28%),radial-gradient(circle_at_92%_88%,rgba(0,132,255,0.22),transparent_30%),linear-gradient(135deg,#02040a_0%,#07111f_42%,#02040a_100%)]" />
+
+      <div className="absolute left-[-9rem] top-[-5rem] h-[42rem] w-[20rem] rotate-[31deg] border-r border-blue-500/25 bg-gradient-to-r from-transparent via-blue-950/40 to-blue-500/10 shadow-[0_0_35px_rgba(0,102,255,0.35)]" />
+      <div className="absolute left-[-2rem] top-[-7rem] h-[38rem] w-px rotate-[31deg] bg-cyan-400/80 shadow-[0_0_28px_rgba(34,211,238,0.75)]" />
+      <div className="absolute right-[-9rem] bottom-[-8rem] h-[42rem] w-[18rem] rotate-[31deg] border-l border-blue-500/30 bg-gradient-to-l from-transparent via-blue-950/35 to-blue-500/10 shadow-[0_0_35px_rgba(0,102,255,0.35)]" />
+      <div className="absolute right-[2rem] bottom-[-9rem] h-[40rem] w-px rotate-[31deg] bg-cyan-400/80 shadow-[0_0_28px_rgba(34,211,238,0.75)]" />
+
+      <div className="absolute left-0 top-1/3 h-72 w-72 rounded-full bg-blue-700/10 blur-3xl" />
+      <div className="absolute bottom-[-120px] left-[-90px] h-64 w-64 rounded-full bg-slate-400/10 blur-3xl" />
+      <div className="absolute inset-0 opacity-[0.13] [background-image:radial-gradient(circle,#60a5fa_1px,transparent_1px)] [background-size:22px_22px]" />
+
+      <main className="relative mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center px-6 py-8">
+        <section className="w-full max-w-3xl text-center">
+          <div className="mx-auto inline-block">
+            <h1 className="text-6xl font-black uppercase leading-none tracking-[0.06em] text-white drop-shadow-[0_6px_18px_rgba(0,0,0,0.65)] md:text-7xl">
+              VONIXX
+            </h1>
+            <div className="mx-auto mt-5 h-px w-full bg-gradient-to-r from-transparent via-blue-500 to-transparent shadow-[0_0_24px_rgba(59,130,246,0.95)]" />
+            <div className="mx-auto -mt-px h-[3px] w-24 rounded-full bg-cyan-400 shadow-[0_0_24px_rgba(34,211,238,0.95)]" />
+          </div>
+
+          <h2 className="mt-10 text-4xl font-extrabold tracking-tight text-white drop-shadow-lg md:text-5xl">
+            Gestão Integrada
+          </h2>
+          <p className="mt-4 text-lg font-medium text-slate-300 md:text-xl">
+            Acesse o painel operacional do seu setor.
           </p>
+        </section>
 
-          <h1 className="mt-2 text-3xl font-bold text-slate-800">
-            Login do Líder
-          </h1>
-
-          <p className="mt-2 text-sm text-slate-500">
-            Acesse os indicadores do seu setor.
-          </p>
-
-          <div className="mt-6 space-y-4">
+        <section className="mt-10 w-full max-w-2xl rounded-[1.75rem] border border-slate-400/25 bg-[#050b16]/70 p-7 shadow-[0_0_55px_rgba(0,68,180,0.28)] backdrop-blur-xl md:p-8">
+          <div className="space-y-7">
             <div>
-              <label className="text-sm font-semibold text-slate-600">Usuário</label>
+              <label className="text-left text-sm font-black uppercase tracking-[0.18em] text-blue-400">
+                Usuário
+              </label>
               <select
                 value={login.nome}
                 onChange={(e) => setLogin({ ...login, nome: e.target.value })}
-                className="mt-1 w-full rounded-xl border px-4 py-3"
+                className="mt-3 w-full appearance-none rounded-xl border border-slate-500/45 bg-[#020711]/75 px-5 py-5 text-xl font-medium text-white outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20"
               >
-                <option value="">Selecione o usuário</option>
+                <option value="" className="bg-slate-950">Selecione o usuário</option>
                 {usuarios.map((u) => (
-                  <option key={u.nome} value={u.nome}>
+                  <option key={u.nome} value={u.nome} className="bg-slate-950">
                     {u.nome}
                   </option>
                 ))}
@@ -479,33 +498,43 @@ export default function AppIndicadoresArea() {
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-600">Senha</label>
+              <label className="text-left text-sm font-black uppercase tracking-[0.18em] text-blue-400">
+                Senha
+              </label>
               <input
                 type="password"
                 value={login.senha}
                 onChange={(e) => setLogin({ ...login, senha: e.target.value })}
                 placeholder="Digite a senha"
-                className="mt-1 w-full rounded-xl border px-4 py-3"
+                className="mt-3 w-full rounded-xl border border-slate-500/45 bg-[#020711]/75 px-5 py-5 text-xl font-medium text-white outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/20"
               />
             </div>
 
             {erroLogin && (
-              <p className="rounded-xl bg-red-50 p-3 text-sm font-semibold text-red-700">
+              <p className="rounded-xl border border-red-500/40 bg-red-950/40 p-4 text-sm font-bold text-red-200">
                 {erroLogin}
               </p>
             )}
 
             <button
               onClick={entrar}
-              className="w-full rounded-xl bg-slate-900 px-5 py-3 font-bold text-white"
+              className="group relative flex w-full items-center justify-center gap-7 overflow-hidden rounded-xl border border-cyan-300/70 bg-gradient-to-r from-blue-700 via-blue-600 to-blue-800 px-6 py-6 text-xl font-black uppercase tracking-[0.08em] text-white shadow-[0_0_35px_rgba(37,99,235,0.62)] transition hover:-translate-y-0.5 hover:shadow-[0_0_48px_rgba(37,99,235,0.86)]"
             >
-              Entrar
+              <span className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent opacity-60" />
+              <span className="relative">Entrar no Painel</span>
+              <span className="relative text-4xl transition group-hover:translate-x-1">›</span>
             </button>
           </div>
-        </div>
-      </div>
-    );
-  }
+        </section>
+
+        <footer className="mt-8 flex items-center gap-3 text-lg font-medium text-slate-300">
+          <span className="text-3xl text-blue-500">♢</span>
+          Aplicativo de Indicadores Operacionais
+        </footer>
+      </main>
+    </div>
+  );
+}
 
   const indicadoresParaEntrada = indicadoresBase.filter(
     (ind) => usuarioLogado.setor === "Todos" || ind.setor === usuarioLogado.setor
