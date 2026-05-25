@@ -999,10 +999,6 @@ export default function AppIndicadoresArea() {
                 )}
               </div>
 
-              <p className="mt-3 text-sm text-slate-400">
-                Para TMR, informe o tempo total em minutos no R1 e o total de carros/cargas no R2.
-                O resultado será exibido em HH:MM.
-              </p>
             </Card>
 
             <Card>
