@@ -1212,7 +1212,7 @@ export default function AppIndicadoresArea() {
       </div>
     </div>
   </section>
-)}  
+        )}  
       </div>
     </div>
   );
