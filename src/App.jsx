@@ -778,24 +778,12 @@ export default function AppIndicadoresArea() {
 
                   <div className="mt-5 grid grid-cols-3 gap-3">
                     <div className="rounded-2xl border border-slate-700/40 bg-[#07111f]/90 p-4">
-                      <p className="text-xs text-slate-400">
-  {indicador.nome === "Acuracidade de Estoque"
-    ? "Itens corretos"
-    : indicador.nome === "Ruptura de PA causada pelo setor"
-    ? "Qtd ruptura"
-    : "R1 Total"}
-</p>
+                      <p className="text-xs text-slate-400">R1 Total</p>
                       <h4 className="text-xl font-bold">{item.somaR1.toLocaleString("pt-BR")}</h4>
                     </div>
 
                     <div className="rounded-2xl border border-slate-700/40 bg-[#07111f]/90 p-4">
-                      <p className="text-xs text-slate-400">
-  {indicador.nome === "Acuracidade de Estoque"
-    ? "Total inventariado"
-    : indicador.nome === "Ruptura de PA causada pelo setor"
-    ? "% ruptura dia"
-    : "R2 Total"}
-</p>
+                      <p className="text-xs text-slate-400">R2 Total</p>
                       <h4 className="text-xl font-bold">
                         {item.tipoCalculo === "percentualDireto"
                           ? "N/A"
