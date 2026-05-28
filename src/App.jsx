@@ -1086,133 +1086,44 @@ export default function AppIndicadoresArea() {
         )}
 
         {aba === "tv" && (
-  <section className="mt-6">
-    <div className="rounded-[2rem] border border-slate-700/40 bg-slate-950/55 p-5 text-white shadow-[0_0_45px_rgba(0,80,255,0.18)] backdrop-blur-xl">
+          <section className="rounded-[2rem] border border-slate-700/40 bg-slate-950/55 p-8 text-white shadow-[0_0_45px_rgba(0,80,255,0.18)] backdrop-blur-xl">
+            <p className="text-slate-400">Modo TV Operacional | {periodoSelecionado.label}</p>
+            <h2 className="text-4xl font-bold">Performance - {setorFiltro}</h2>
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-300">
-            Modo TV Operacional
-          </p>
+            <div className="mt-8 grid gap-6 md:grid-cols-3">
+              <div className="rounded-3xl border border-blue-500/20 bg-blue-500/10 p-6">
+                <p className="text-slate-300">Indicadores</p>
+                <h3 className="mt-2 text-5xl font-bold">{resumoIndicadores.length}</h3>
+              </div>
 
-          <h1 className="mt-2 text-3xl font-black tracking-tight text-white">
-            Flash Cards — Indicadores
-          </h1>
+              <div className="rounded-3xl border border-blue-500/20 bg-blue-500/10 p-6">
+                <p className="text-slate-300">Dentro da Meta</p>
+                <h3 className="mt-2 text-5xl font-bold">{verdes}</h3>
+              </div>
 
-          <p className="mt-1 text-sm text-slate-400">
-            Visualização rápida dos indicadores operacionais.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-3 gap-3 text-center">
-
-          <div className="rounded-2xl border border-blue-500/20 bg-blue-500/10 px-5 py-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-blue-200">
-              Indicadores
-            </p>
-
-            <h3 className="mt-1 text-3xl font-black text-white">
-              {indicadoresFiltrados.length}
-            </h3>
-          </div>
-
-          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-5 py-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-200">
-              Dentro
-            </p>
-
-            <h3 className="mt-1 text-3xl font-black text-emerald-300">
-              {
-                indicadoresFiltrados.filter(
-                  (i) => i.status === "Dentro da Meta"
-                ).length
-              }
-            </h3>
-          </div>
-
-          <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-red-200">
-              Fora
-            </p>
-
-            <h3 className="mt-1 text-3xl font-black text-red-300">
-              {
-                indicadoresFiltrados.filter(
-                  (i) => i.status !== "Dentro da Meta"
-                ).length
-              }
-            </h3>
-          </div>
-
-        </div>
-      </div>
-
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-
-        {indicadoresFiltrados.map((i) => {
-
-          const ok = i.status === "Dentro da Meta";
-
-          return (
-            <div
-              key={i.id}
-              className={`relative min-h-[205px] overflow-hidden rounded-[1.5rem] border p-4 shadow-[0_0_24px_rgba(0,80,255,0.12)]
-              ${
-                ok
-                  ? "border-emerald-400/35 bg-emerald-500/10"
-                  : "border-red-400/35 bg-red-500/10"
-              }`}
-            >
-
-              <div className="relative flex h-full flex-col justify-between">
-
-                <div>
-                  <p className="text-[11px] font-black uppercase tracking-[0.13em] text-slate-300">
-                    {i.setor}
-                  </p>
-
-                  <h4 className="mt-3 line-clamp-3 text-base font-black leading-tight text-white">
-                    {i.nome}
-                  </h4>
-                </div>
-
-                <div className="mt-4">
-
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-slate-400">
-                    Resultado
-                  </p>
-
-                  <p className="mt-1 text-4xl font-black tracking-tight text-white">
-                    {i.resultado}
-                  </p>
-
-                  <div className="mt-3 flex items-center justify-between gap-2">
-
-                    <span className="rounded-full border border-slate-600/50 bg-slate-950/45 px-3 py-1 text-[11px] font-black text-slate-200">
-                      Meta {i.meta}
-                    </span>
-
-                    <span
-                      className={`rounded-full border px-3 py-1 text-[11px] font-black
-                      ${
-                        ok
-                          ? "border-emerald-400/40 bg-emerald-500/15 text-emerald-200"
-                          : "border-red-400/40 bg-red-500/15 text-red-200"
-                      }`}
-                    >
-                      {i.status}
-                    </span>
-
-                  </div>
-                </div>
+              <div className="rounded-3xl border border-blue-500/20 bg-blue-500/10 p-6">
+                <p className="text-slate-300">Fora da Meta</p>
+                <h3 className="mt-2 text-5xl font-bold">{vermelhos}</h3>
               </div>
             </div>
-          );
-        })}
-      </div>
-    </div>
-  </section>
-        )}  
+
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              {resumoIndicadores.map((i) => (
+                <div key={i.id} className={`rounded-2xl p-6 ${i.status.painel}`}>
+                  <p className="text-sm opacity-80">
+                    Meta: {i.regraMeta === "menor" ? "até" : "mínimo"} {i.meta}
+                    {i.unidade}
+                  </p>
+                  <h4 className="text-2xl font-bold">{i.indicador}</h4>
+                  <p className="mt-3 text-5xl font-bold">{valorFormatado(i.resultado, i)}</p>
+                  <Badge className="mt-4 border-white bg-white/20 text-white">
+                    {i.status.texto}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
